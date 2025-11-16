@@ -1,43 +1,43 @@
-import random
+п»їimport random
 from bll.models import Test, Question, Answer, TestResult
-from dal.repository import FileRepository # BLL залежить від *абстракції* DAL
-from bll.exceptions import * # Імпортуємо наші виключення
+from dal.repository import FileRepository # BLL Р·Р°Р»РµР¶РёС‚СЊ РІС–Рґ *Р°Р±СЃС‚СЂР°РєС†С–С—* DAL
+from bll.exceptions import * # Р†РјРїРѕСЂС‚СѓС”РјРѕ РЅР°С€С– РІРёРєР»СЋС‡РµРЅРЅСЏ
 
-# --- Сервіс 1: Керування тестами (для Адміністратора) ---
-# Цей клас реалізує Функціональні вимоги 1, 2, 3.1, 3.2, 4.1
+# --- РЎРµСЂРІС–СЃ 1: РљРµСЂСѓРІР°РЅРЅСЏ С‚РµСЃС‚Р°РјРё (РґР»СЏ РђРґРјС–РЅС–СЃС‚СЂР°С‚РѕСЂР°) ---
+# Р¦РµР№ РєР»Р°СЃ СЂРµР°Р»С–Р·СѓС” Р¤СѓРЅРєС†С–РѕРЅР°Р»СЊРЅС– РІРёРјРѕРіРё 1, 2, 3.1, 3.2, 4.1
 
 class TestManagementService:
     
     def __init__(self, repository: FileRepository):
-        # 7. Inversion of Control: Ми отримуємо репозиторій, а не створюємо
+        # 7. Inversion of Control: РњРё РѕС‚СЂРёРјСѓС”РјРѕ СЂРµРїРѕР·РёС‚РѕСЂС–Р№, Р° РЅРµ СЃС‚РІРѕСЂСЋС”РјРѕ
         self._repository = repository
         self._tests = self._repository.load_all_tests()
 
     def _get_test_by_id(self, test_id: str) -> Test:
-        """Допоміжний приватний метод для пошуку тесту."""
+        """Р”РѕРїРѕРјС–Р¶РЅРёР№ РїСЂРёРІР°С‚РЅРёР№ РјРµС‚РѕРґ РґР»СЏ РїРѕС€СѓРєСѓ С‚РµСЃС‚Сѓ."""
         for test in self._tests:
             if test.id == test_id:
                 return test
-        # 5. Генерація власного виключення
-        raise TestNotFoundError(f"Тест з ID {test_id} не знайдено.")
+        # 5. Р“РµРЅРµСЂР°С†С–СЏ РІР»Р°СЃРЅРѕРіРѕ РІРёРєР»СЋС‡РµРЅРЅСЏ
+        raise TestNotFoundError(f"РўРµСЃС‚ Р· ID {test_id} РЅРµ Р·РЅР°Р№РґРµРЅРѕ.")
 
     def _get_question_by_id(self, test: Test, question_id: str) -> Question:
         for q in test.questions:
             if q.id == question_id:
                 return q
-        raise QuestionNotFoundError(f"Питання з ID {question_id} не знайдено.")
+        raise QuestionNotFoundError(f"РџРёС‚Р°РЅРЅСЏ Р· ID {question_id} РЅРµ Р·РЅР°Р№РґРµРЅРѕ.")
 
     def save_changes(self):
-        """Зберігає всі зміни у сховищі."""
+        """Р—Р±РµСЂС–РіР°С” РІСЃС– Р·РјС–РЅРё Сѓ СЃС…РѕРІРёС‰С–."""
         self._repository.save_all_tests(self._tests)
 
-    # --- 1. Керування питаннями ---
+    # --- 1. РљРµСЂСѓРІР°РЅРЅСЏ РїРёС‚Р°РЅРЅСЏРјРё ---
     
     def add_question(self, test_id: str, question_text: str) -> Question:
         test = self._get_test_by_id(test_id)
         new_question = Question(text=question_text)
         test.add_question(new_question)
-        return new_question # Повертаємо, щоб інтерфейс знав ID
+        return new_question # РџРѕРІРµСЂС‚Р°С”РјРѕ, С‰РѕР± С–РЅС‚РµСЂС„РµР№СЃ Р·РЅР°РІ ID
 
     def remove_question(self, test_id: str, question_id: str):
         test = self._get_test_by_id(test_id)
@@ -53,7 +53,7 @@ class TestManagementService:
         test = self._get_test_by_id(test_id)
         return test.questions
 
-    # --- 2. Керування відповідями ---
+    # --- 2. РљРµСЂСѓРІР°РЅРЅСЏ РІС–РґРїРѕРІС–РґСЏРјРё ---
 
     def add_answer(self, test_id: str, question_id: str, text: str, is_correct: bool) -> Answer:
         test = self._get_test_by_id(test_id)
@@ -69,7 +69,7 @@ class TestManagementService:
             if ans.id == answer_id:
                 question.answers.remove(ans)
                 return
-        raise AnswerNotFoundError(f"Відповідь з ID {answer_id} не знайдено.")
+        raise AnswerNotFoundError(f"Р’С–РґРїРѕРІС–РґСЊ Р· ID {answer_id} РЅРµ Р·РЅР°Р№РґРµРЅРѕ.")
     
     def edit_answer(self, test_id: str, q_id: str, ans_id: str, new_text: str, new_is_correct: bool):
         answer = self._get_answer_by_id(test_id, q_id, ans_id)
@@ -86,9 +86,9 @@ class TestManagementService:
         for ans in question.answers:
             if ans.id == ans_id:
                 return ans
-        raise AnswerNotFoundError(f"Відповідь з ID {ans_id} не знайдено.")
+        raise AnswerNotFoundError(f"Р’С–РґРїРѕРІС–РґСЊ Р· ID {ans_id} РЅРµ Р·РЅР°Р№РґРµРЅРѕ.")
 
-    # --- 3. Керування тестами ---
+    # --- 3. РљРµСЂСѓРІР°РЅРЅСЏ С‚РµСЃС‚Р°РјРё ---
 
     def create_test(self, title: str, time_per_question: int = 60) -> Test:
         new_test = Test(title=title, time_per_question=time_per_question)
@@ -100,52 +100,52 @@ class TestManagementService:
         test.title = new_title
         test.time_per_question = new_time
     
-    # --- 4. Пошук ---
+    # --- 4. РџРѕС€СѓРє ---
     
     def get_all_tests(self) -> list[Test]:
-        # 4.1. Пошук тестів (у нашому випадку - повертаємо всі)
+        # 4.1. РџРѕС€СѓРє С‚РµСЃС‚С–РІ (Сѓ РЅР°С€РѕРјСѓ РІРёРїР°РґРєСѓ - РїРѕРІРµСЂС‚Р°С”РјРѕ РІСЃС–)
         return self._tests
 
     def find_test_by_id(self, test_id: str) -> Test:
         return self._get_test_by_id(test_id)
 
 
-# --- Сервіс 2: Проходження тестування (для Студента) ---
-# Цей клас реалізує вимоги 2.5, 3.3, 3.4
+# --- РЎРµСЂРІС–СЃ 2: РџСЂРѕС…РѕРґР¶РµРЅРЅСЏ С‚РµСЃС‚СѓРІР°РЅРЅСЏ (РґР»СЏ РЎС‚СѓРґРµРЅС‚Р°) ---
+# Р¦РµР№ РєР»Р°СЃ СЂРµР°Р»С–Р·СѓС” РІРёРјРѕРіРё 2.5, 3.3, 3.4
 
 class TestingService:
     def __init__(self, test: Test):
         if not test.questions:
-            # 5. Перевірка виняткової ситуації
-            raise InvalidTestError("Неможливо почати тест, у ньому немає питань.")
+            # 5. РџРµСЂРµРІС–СЂРєР° РІРёРЅСЏС‚РєРѕРІРѕС— СЃРёС‚СѓР°С†С–С—
+            raise InvalidTestError("РќРµРјРѕР¶Р»РёРІРѕ РїРѕС‡Р°С‚Рё С‚РµСЃС‚, Сѓ РЅСЊРѕРјСѓ РЅРµРјР°С” РїРёС‚Р°РЅСЊ.")
         
         self.test = test
         self.current_question_index = -1
-        # Використовуємо словник для зберігання {question_id: selected_answer_id}
+        # Р’РёРєРѕСЂРёСЃС‚РѕРІСѓС”РјРѕ СЃР»РѕРІРЅРёРє РґР»СЏ Р·Р±РµСЂС–РіР°РЅРЅСЏ {question_id: selected_answer_id}
         self.user_answers: dict[str, str] = {}
         self._shuffled_questions = random.sample(self.test.questions, len(self.test.questions))
 
     def get_next_question(self) -> Question | None:
-        """Повертає наступне питання або None, якщо тест закінчено."""
+        """РџРѕРІРµСЂС‚Р°С” РЅР°СЃС‚СѓРїРЅРµ РїРёС‚Р°РЅРЅСЏ Р°Р±Рѕ None, СЏРєС‰Рѕ С‚РµСЃС‚ Р·Р°РєС–РЅС‡РµРЅРѕ."""
         self.current_question_index += 1
         if self.current_question_index < len(self._shuffled_questions):
             question = self._shuffled_questions[self.current_question_index]
             
-            # 2.5. Варіанти відповідей генеруються автоматично (перемішуються)
+            # 2.5. Р’Р°СЂС–Р°РЅС‚Рё РІС–РґРїРѕРІС–РґРµР№ РіРµРЅРµСЂСѓСЋС‚СЊСЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РЅРѕ (РїРµСЂРµРјС–С€СѓСЋС‚СЊСЃСЏ)
             random.shuffle(question.answers)
             return question
         return None
 
     def submit_answer(self, question_id: str, answer_id: str):
-        """Зберегти відповідь користувача."""
+        """Р—Р±РµСЂРµРіС‚Рё РІС–РґРїРѕРІС–РґСЊ РєРѕСЂРёСЃС‚СѓРІР°С‡Р°."""
         self.user_answers[question_id] = answer_id
 
     def stop_test(self) -> dict:
-        """3.4. Можливість передчасно вийти з тесту (та порахувати результат)."""
+        """3.4. РњРѕР¶Р»РёРІС–СЃС‚СЊ РїРµСЂРµРґС‡Р°СЃРЅРѕ РІРёР№С‚Рё Р· С‚РµСЃС‚Сѓ (С‚Р° РїРѕСЂР°С…СѓРІР°С‚Рё СЂРµР·СѓР»СЊС‚Р°С‚)."""
         return self.calculate_results()
 
     def calculate_results(self) -> dict:
-        """3.3. Можливість порахувати процент правильних відповідей."""
+        """3.3. РњРѕР¶Р»РёРІС–СЃС‚СЊ РїРѕСЂР°С…СѓРІР°С‚Рё РїСЂРѕС†РµРЅС‚ РїСЂР°РІРёР»СЊРЅРёС… РІС–РґРїРѕРІС–РґРµР№."""
         correct_count = 0
         total_questions = len(self._shuffled_questions)
         
@@ -163,15 +163,15 @@ class TestingService:
         percent = (correct_count / total_questions) * 100
         return {"percent": round(percent, 2), "correct": correct_count, "total": total_questions}
 
-# --- Сервіс 3: Статистика ---
-# Цей клас реалізує вимогу 4.2
+# --- РЎРµСЂРІС–СЃ 3: РЎС‚Р°С‚РёСЃС‚РёРєР° ---
+# Р¦РµР№ РєР»Р°СЃ СЂРµР°Р»С–Р·СѓС” РІРёРјРѕРіСѓ 4.2
 
 class StatisticsService:
     def __init__(self, repository: FileRepository):
         self._repository = repository
 
     def record_result(self, test_id: str, test_title: str, score: float, student: str):
-        """Зберегти результат проходження."""
+        """Р—Р±РµСЂРµРіС‚Рё СЂРµР·СѓР»СЊС‚Р°С‚ РїСЂРѕС…РѕРґР¶РµРЅРЅСЏ."""
         result = TestResult(
             test_title=test_title,
             test_id=test_id,
@@ -181,7 +181,7 @@ class StatisticsService:
         self._repository.save_statistic(result)
 
     def get_test_statistics(self) -> list[dict]:
-        """4.2. Перегляд статистики тестів."""
+        """4.2. РџРµСЂРµРіР»СЏРґ СЃС‚Р°С‚РёСЃС‚РёРєРё С‚РµСЃС‚С–РІ."""
         all_results = self._repository.load_statistics()
         all_tests = self._repository.load_all_tests()
         

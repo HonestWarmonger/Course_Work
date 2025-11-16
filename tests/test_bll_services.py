@@ -1,14 +1,14 @@
-import unittest
+п»їimport unittest
 from unittest.mock import Mock, patch
 import sys
 import os
 
-# --- Налаштування шляху для імпортів ---
-# Це потрібно, щоб Python міг знайти папки 'bll' та 'dal' з тесту
-# (Можливо, доведеться трішки змінити, залежно від вашої IDE)
+# --- РќР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ С€Р»СЏС…Сѓ РґР»СЏ С–РјРїРѕСЂС‚С–РІ ---
+# Р¦Рµ РїРѕС‚СЂС–Р±РЅРѕ, С‰РѕР± Python РјС–Рі Р·РЅР°Р№С‚Рё РїР°РїРєРё 'bll' С‚Р° 'dal' Р· С‚РµСЃС‚Сѓ
+# (РњРѕР¶Р»РёРІРѕ, РґРѕРІРµРґРµС‚СЊСЃСЏ С‚СЂС–С€РєРё Р·РјС–РЅРёС‚Рё, Р·Р°Р»РµР¶РЅРѕ РІС–Рґ РІР°С€РѕС— IDE)
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, project_root)
-# --- Кінець налаштування шляху ---
+# --- РљС–РЅРµС†СЊ РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ С€Р»СЏС…Сѓ ---
 
 from bll.services import TestManagementService, StatisticsService, TestingService
 from bll.exceptions import TestNotFoundError, InvalidTestError
@@ -18,128 +18,128 @@ from dal.repository import FileRepository
 class TestTestManagementService(unittest.TestCase):
 
     def setUp(self):
-        """Цей метод викликається перед кожним тестом."""
+        """Р¦РµР№ РјРµС‚РѕРґ РІРёРєР»РёРєР°С”С‚СЊСЃСЏ РїРµСЂРµРґ РєРѕР¶РЅРёРј С‚РµСЃС‚РѕРј."""
         
-        # Arrange (Загальна підготовка)
-        # 1. Створюємо Mock для FileRepository
+        # Arrange (Р—Р°РіР°Р»СЊРЅР° РїС–РґРіРѕС‚РѕРІРєР°)
+        # 1. РЎС‚РІРѕСЂСЋС”РјРѕ Mock РґР»СЏ FileRepository
         self.mock_repo = Mock(spec=FileRepository)
         
-        # 2. Налаштовуємо Mock: коли BLL попросить 'load_all_tests', 
-        #    mock поверне порожній список.
+        # 2. РќР°Р»Р°С€С‚РѕРІСѓС”РјРѕ Mock: РєРѕР»Рё BLL РїРѕРїСЂРѕСЃРёС‚СЊ 'load_all_tests', 
+        #    mock РїРѕРІРµСЂРЅРµ РїРѕСЂРѕР¶РЅС–Р№ СЃРїРёСЃРѕРє.
         self.mock_repo.load_all_tests.return_value = []
         
-        # 3. Створюємо сервіс (BLL) з mock-репозиторієм (Inversion of Control)
+        # 3. РЎС‚РІРѕСЂСЋС”РјРѕ СЃРµСЂРІС–СЃ (BLL) Р· mock-СЂРµРїРѕР·РёС‚РѕСЂС–С”Рј (Inversion of Control)
         self.service = TestManagementService(self.mock_repo)
 
     def test_create_test_success(self):
-        # --- Arrange (Підготовка) ---
-        title = "Новий Тест"
+        # --- Arrange (РџС–РґРіРѕС‚РѕРІРєР°) ---
+        title = "РќРѕРІРёР№ РўРµСЃС‚"
         time = 30
 
-        # --- Act (Дія) ---
+        # --- Act (Р”С–СЏ) ---
         new_test = self.service.create_test(title, time)
 
-        # --- Assert (Перевірка) ---
+        # --- Assert (РџРµСЂРµРІС–СЂРєР°) ---
         self.assertIsNotNone(new_test)
         self.assertEqual(new_test.title, title)
         self.assertEqual(new_test.time_per_question, time)
-        # Переконуємося, що тест додано до внутрішнього списку сервісу
+        # РџРµСЂРµРєРѕРЅСѓС”РјРѕСЃСЏ, С‰Рѕ С‚РµСЃС‚ РґРѕРґР°РЅРѕ РґРѕ РІРЅСѓС‚СЂС–С€РЅСЊРѕРіРѕ СЃРїРёСЃРєСѓ СЃРµСЂРІС–СЃСѓ
         self.assertIn(new_test, self.service.get_all_tests())
 
     def test_save_changes_calls_repository_save(self):
-        # --- Arrange (Підготовка) ---
-        # Створимо тест, щоб було що зберігати
-        test = self.service.create_test("Тест для збереження", 60)
+        # --- Arrange (РџС–РґРіРѕС‚РѕРІРєР°) ---
+        # РЎС‚РІРѕСЂРёРјРѕ С‚РµСЃС‚, С‰РѕР± Р±СѓР»Рѕ С‰Рѕ Р·Р±РµСЂС–РіР°С‚Рё
+        test = self.service.create_test("РўРµСЃС‚ РґР»СЏ Р·Р±РµСЂРµР¶РµРЅРЅСЏ", 60)
         
-        # --- Act (Дія) ---
+        # --- Act (Р”С–СЏ) ---
         self.service.save_changes()
 
-        # --- Assert (Перевірка) ---
-        # Ми перевіряємо, що BLL викликав метод 'save_all_tests' 
-        # нашого mock-репозиторію РІВНО ОДИН РАЗ.
+        # --- Assert (РџРµСЂРµРІС–СЂРєР°) ---
+        # РњРё РїРµСЂРµРІС–СЂСЏС”РјРѕ, С‰Рѕ BLL РІРёРєР»РёРєР°РІ РјРµС‚РѕРґ 'save_all_tests' 
+        # РЅР°С€РѕРіРѕ mock-СЂРµРїРѕР·РёС‚РѕСЂС–СЋ Р Р†Р’РќРћ РћР”РРќ Р РђР—.
         self.mock_repo.save_all_tests.assert_called_once()
         
-        # ...і що він передав туди список, який містить наш тест
+        # ...С– С‰Рѕ РІС–РЅ РїРµСЂРµРґР°РІ С‚СѓРґРё СЃРїРёСЃРѕРє, СЏРєРёР№ РјС–СЃС‚РёС‚СЊ РЅР°С€ С‚РµСЃС‚
         saved_list = self.mock_repo.save_all_tests.call_args[0][0]
         self.assertIn(test, saved_list)
 
     def test_get_test_by_id_raises_not_found_error(self):
-        # --- Arrange (Підготовка) ---
+        # --- Arrange (РџС–РґРіРѕС‚РѕРІРєР°) ---
         invalid_id = "non_existing_id"
 
-        # --- Act & Assert (Дія та Перевірка) ---
-        # Ми очікуємо, що BLL згенерує наше власне виключення
+        # --- Act & Assert (Р”С–СЏ С‚Р° РџРµСЂРµРІС–СЂРєР°) ---
+        # РњРё РѕС‡С–РєСѓС”РјРѕ, С‰Рѕ BLL Р·РіРµРЅРµСЂСѓС” РЅР°С€Рµ РІР»Р°СЃРЅРµ РІРёРєР»СЋС‡РµРЅРЅСЏ
         with self.assertRaises(TestNotFoundError):
             self.service.find_test_by_id(invalid_id)
 
     def test_add_question_to_test(self):
-        # --- Arrange (Підготовка) ---
-        test = self.service.create_test("Тест з питаннями", 60)
-        question_text = "Скільки буде 2+2?"
+        # --- Arrange (РџС–РґРіРѕС‚РѕРІРєР°) ---
+        test = self.service.create_test("РўРµСЃС‚ Р· РїРёС‚Р°РЅРЅСЏРјРё", 60)
+        question_text = "РЎРєС–Р»СЊРєРё Р±СѓРґРµ 2+2?"
 
-        # --- Act (Дія) ---
+        # --- Act (Р”С–СЏ) ---
         new_question = self.service.add_question(test.id, question_text)
 
-        # --- Assert (Перевірка) ---
+        # --- Assert (РџРµСЂРµРІС–СЂРєР°) ---
         self.assertEqual(new_question.text, question_text)
         self.assertIn(new_question, test.questions)
         self.assertEqual(len(test.questions), 1)
 
     def test_add_answer_to_question(self):
-        # --- Arrange (Підготовка) ---
-        test = self.service.create_test("Тест з відповідями", 60)
-        q = self.service.add_question(test.id, "Яка мова програмування?")
+        # --- Arrange (РџС–РґРіРѕС‚РѕРІРєР°) ---
+        test = self.service.create_test("РўРµСЃС‚ Р· РІС–РґРїРѕРІС–РґСЏРјРё", 60)
+        q = self.service.add_question(test.id, "РЇРєР° РјРѕРІР° РїСЂРѕРіСЂР°РјСѓРІР°РЅРЅСЏ?")
         
         answer_text = "Python"
         is_correct = True
 
-        # --- Act (Дія) ---
+        # --- Act (Р”С–СЏ) ---
         new_answer = self.service.add_answer(test.id, q.id, answer_text, is_correct)
 
-        # --- Assert (Перевірка) ---
+        # --- Assert (РџРµСЂРµРІС–СЂРєР°) ---
         self.assertEqual(new_answer.text, answer_text)
         self.assertEqual(new_answer.is_correct, is_correct)
         self.assertIn(new_answer, q.answers)
 
-    # Тут можна додати тести для remove_question, edit_question,
+    # РўСѓС‚ РјРѕР¶РЅР° РґРѕРґР°С‚Рё С‚РµСЃС‚Рё РґР»СЏ remove_question, edit_question,
     # remove_answer, edit_answer...
 
-# --- Тести для TestingService (друга сутність) ---
-# Завдання вимагає 50% покриття для інших, тому додамо кілька тестів
+# --- РўРµСЃС‚Рё РґР»СЏ TestingService (РґСЂСѓРіР° СЃСѓС‚РЅС–СЃС‚СЊ) ---
+# Р—Р°РІРґР°РЅРЅСЏ РІРёРјР°РіР°С” 50% РїРѕРєСЂРёС‚С‚СЏ РґР»СЏ С–РЅС€РёС…, С‚РѕРјСѓ РґРѕРґР°РјРѕ РєС–Р»СЊРєР° С‚РµСЃС‚С–РІ
 
 class TestTestingService(unittest.TestCase):
 
     def setUp(self):
-        # Створимо "живі" об'єкти для тестування логіки
-        self.test = Test("Повноцінний тест", 60)
-        q1 = Question("Питання 1")
-        q1.add_answer(Answer("Правильна 1", is_correct=True))
-        q1.add_answer(Answer("Неправильна 1", is_correct=False))
+        # РЎС‚РІРѕСЂРёРјРѕ "Р¶РёРІС–" РѕР±'С”РєС‚Рё РґР»СЏ С‚РµСЃС‚СѓРІР°РЅРЅСЏ Р»РѕРіС–РєРё
+        self.test = Test("РџРѕРІРЅРѕС†С–РЅРЅРёР№ С‚РµСЃС‚", 60)
+        q1 = Question("РџРёС‚Р°РЅРЅСЏ 1")
+        q1.add_answer(Answer("РџСЂР°РІРёР»СЊРЅР° 1", is_correct=True))
+        q1.add_answer(Answer("РќРµРїСЂР°РІРёР»СЊРЅР° 1", is_correct=False))
         
-        q2 = Question("Питання 2")
-        q2.add_answer(Answer("Правильна 2", is_correct=True))
-        q2.add_answer(Answer("Неправильна 2", is_correct=False))
+        q2 = Question("РџРёС‚Р°РЅРЅСЏ 2")
+        q2.add_answer(Answer("РџСЂР°РІРёР»СЊРЅР° 2", is_correct=True))
+        q2.add_answer(Answer("РќРµРїСЂР°РІРёР»СЊРЅР° 2", is_correct=False))
         
         self.test.add_question(q1)
         self.test.add_question(q2)
 
     def test_start_test_with_no_questions_raises_error(self):
-        # --- Arrange (Підготовка) ---
-        empty_test = Test("Порожній тест", 60)
+        # --- Arrange (РџС–РґРіРѕС‚РѕРІРєР°) ---
+        empty_test = Test("РџРѕСЂРѕР¶РЅС–Р№ С‚РµСЃС‚", 60)
 
-        # --- Act & Assert (Дія та Перевірка) ---
+        # --- Act & Assert (Р”С–СЏ С‚Р° РџРµСЂРµРІС–СЂРєР°) ---
         with self.assertRaises(InvalidTestError):
             TestingService(empty_test)
             
     def test_calculate_results_100_percent(self):
-        # --- Arrange (Підготовка) ---
+        # --- Arrange (РџС–РґРіРѕС‚РѕРІРєР°) ---
         service = TestingService(self.test)
         
-        # Імітуємо проходження тесту
+        # Р†РјС–С‚СѓС”РјРѕ РїСЂРѕС…РѕРґР¶РµРЅРЅСЏ С‚РµСЃС‚Сѓ
         q1 = self.test.questions[0]
         q2 = self.test.questions[1]
         
-        # Знаходимо правильні відповіді
+        # Р—РЅР°С…РѕРґРёРјРѕ РїСЂР°РІРёР»СЊРЅС– РІС–РґРїРѕРІС–РґС–
         correct_ans1_id = [a.id for a in q1.answers if a.is_correct][0]
         correct_ans2_id = [a.id for a in q2.answers if a.is_correct][0]
 
@@ -148,16 +148,16 @@ class TestTestingService(unittest.TestCase):
             q2.id: correct_ans2_id
         }
 
-        # --- Act (Дія) ---
+        # --- Act (Р”С–СЏ) ---
         results = service.calculate_results()
 
-        # --- Assert (Перевірка) ---
+        # --- Assert (РџРµСЂРµРІС–СЂРєР°) ---
         self.assertEqual(results["percent"], 100.0)
         self.assertEqual(results["correct"], 2)
         self.assertEqual(results["total"], 2)
 
     def test_calculate_results_50_percent(self):
-        # --- Arrange (Підготовка) ---
+        # --- Arrange (РџС–РґРіРѕС‚РѕРІРєР°) ---
         service = TestingService(self.test)
         
         q1 = self.test.questions[0]
@@ -171,10 +171,10 @@ class TestTestingService(unittest.TestCase):
             q2.id: incorrect_ans2_id
         }
 
-        # --- Act (Дія) ---
+        # --- Act (Р”С–СЏ) ---
         results = service.calculate_results()
 
-        # --- Assert (Перевірка) ---
+        # --- Assert (РџРµСЂРµРІС–СЂРєР°) ---
         self.assertEqual(results["percent"], 50.0)
         self.assertEqual(results["correct"], 1)
         self.assertEqual(results["total"], 2)

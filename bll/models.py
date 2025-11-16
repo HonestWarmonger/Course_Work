@@ -1,7 +1,7 @@
-import uuid
+п»їimport uuid
 
-# Використовуємо uuid, щоб мати унікальний ID для кожного 
-# об'єкта, що значно полегшує пошук, видалення та редагування.
+# Р’РёРєРѕСЂРёСЃС‚РѕРІСѓС”РјРѕ uuid, С‰РѕР± РјР°С‚Рё СѓРЅС–РєР°Р»СЊРЅРёР№ ID РґР»СЏ РєРѕР¶РЅРѕРіРѕ 
+# РѕР±'С”РєС‚Р°, С‰Рѕ Р·РЅР°С‡РЅРѕ РїРѕР»РµРіС€СѓС” РїРѕС€СѓРє, РІРёРґР°Р»РµРЅРЅСЏ С‚Р° СЂРµРґР°РіСѓРІР°РЅРЅСЏ.
 
 class Answer:
     def __init__(self, text: str, is_correct: bool = False, id: str = None):
@@ -9,7 +9,7 @@ class Answer:
         self.text = text
         self.is_correct = is_correct
 
-    # Методи to_dict/from_dict для легкої серіалізації
+    # РњРµС‚РѕРґРё to_dict/from_dict РґР»СЏ Р»РµРіРєРѕС— СЃРµСЂС–Р°Р»С–Р·Р°С†С–С—
     def to_dict(self):
         return {"id": self.id, "text": self.text, "is_correct": self.is_correct}
 
@@ -30,14 +30,14 @@ class Question:
         return {
             "id": self.id,
             "text": self.text,
-            # Рекурсивно серіалізуємо дочірні об'єкти
+            # Р РµРєСѓСЂСЃРёРІРЅРѕ СЃРµСЂС–Р°Р»С–Р·СѓС”РјРѕ РґРѕС‡С–СЂРЅС– РѕР±'С”РєС‚Рё
             "answers": [ans.to_dict() for ans in self.answers]
         }
 
     @classmethod
     def from_dict(cls, data):
         question = cls(data['text'], data['id'])
-        # Рекурсивно десеріалізуємо дочірні об'єкти
+        # Р РµРєСѓСЂСЃРёРІРЅРѕ РґРµСЃРµСЂС–Р°Р»С–Р·СѓС”РјРѕ РґРѕС‡С–СЂРЅС– РѕР±'С”РєС‚Рё
         question.answers = [Answer.from_dict(ans_data) for ans_data in data['answers']]
         return question
 
@@ -45,7 +45,7 @@ class Test:
     def __init__(self, title: str, time_per_question: int = 60, id: str = None):
         self.id = id or str(uuid.uuid4())
         self.title = title
-        self.time_per_question = time_per_question  # в секундах
+        self.time_per_question = time_per_question  # РІ СЃРµРєСѓРЅРґР°С…
         self.questions: list[Question] = []
 
     def add_question(self, question: Question):
@@ -66,8 +66,8 @@ class Test:
         return test
 
 class TestResult:
-    # Окрема модель для статистики
-    def __init__(self, test_title: str, test_id: str, score_percent: float, student_name: str = "Анонім"):
+    # РћРєСЂРµРјР° РјРѕРґРµР»СЊ РґР»СЏ СЃС‚Р°С‚РёСЃС‚РёРєРё
+    def __init__(self, test_title: str, test_id: str, score_percent: float, student_name: str = "РђРЅРѕРЅС–Рј"):
         self.test_title = test_title
         self.test_id = test_id
         self.score_percent = score_percent
@@ -83,4 +83,4 @@ class TestResult:
 
     @classmethod
     def from_dict(cls, data):
-        return cls(data['test_title'], data['test_id'], data['score_percent'], data.get('student_name', 'Анонім'))
+        return cls(data['test_title'], data['test_id'], data['score_percent'], data.get('student_name', 'РђРЅРѕРЅС–Рј'))

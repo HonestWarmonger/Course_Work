@@ -1,51 +1,51 @@
-import json
+п»їimport json
 import os
-from bll.models import Test, TestResult  # Імпортуємо наші моделі
+from bll.models import Test, TestResult  # Р†РјРїРѕСЂС‚СѓС”РјРѕ РЅР°С€С– РјРѕРґРµР»С–
 
 class FileRepository:
     def __init__(self, tests_file_path: str, stats_file_path: str):
         self.tests_file_path = tests_file_path
         self.stats_file_path = stats_file_path
         
-        # Переконуємося, що файли існують (можна створити порожні, якщо їх немає)
+        # РџРµСЂРµРєРѕРЅСѓС”РјРѕСЃСЏ, С‰Рѕ С„Р°Р№Р»Рё С–СЃРЅСѓСЋС‚СЊ (РјРѕР¶РЅР° СЃС‚РІРѕСЂРёС‚Рё РїРѕСЂРѕР¶РЅС–, СЏРєС‰Рѕ С—С… РЅРµРјР°С”)
         self._ensure_file_exists(self.tests_file_path, [])
         self._ensure_file_exists(self.stats_file_path, [])
 
     def _ensure_file_exists(self, file_path, default_content):
-        # Допоміжна функція, щоб створити файл, якщо його немає
+        # Р”РѕРїРѕРјС–Р¶РЅР° С„СѓРЅРєС†С–СЏ, С‰РѕР± СЃС‚РІРѕСЂРёС‚Рё С„Р°Р№Р», СЏРєС‰Рѕ Р№РѕРіРѕ РЅРµРјР°С”
         if not os.path.exists(file_path):
             try:
                 with open(file_path, 'w', encoding='utf-8') as f:
                     json.dump(default_content, f)
             except IOError as e:
-                print(f"Помилка при створенні файлу {file_path}: {e}")
+                print(f"РџРѕРјРёР»РєР° РїСЂРё СЃС‚РІРѕСЂРµРЅРЅС– С„Р°Р№Р»Сѓ {file_path}: {e}")
 
-    # --- Робота з Тестами ---
+    # --- Р РѕР±РѕС‚Р° Р· РўРµСЃС‚Р°РјРё ---
 
     def load_all_tests(self) -> list[Test]:
         try:
             with open(self.tests_file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                # Використовуємо .from_dict() для "оживлення" об'єктів
+                # Р’РёРєРѕСЂРёСЃС‚РѕРІСѓС”РјРѕ .from_dict() РґР»СЏ "РѕР¶РёРІР»РµРЅРЅСЏ" РѕР±'С”РєС‚С–РІ
                 return [Test.from_dict(test_data) for test_data in data]
         except (IOError, json.JSONDecodeError, FileNotFoundError):
-            # Якщо файл пошкоджений або порожній, повертаємо порожній список
-            # Це відповідає вимозі про обробку виняткових ситуацій
+            # РЇРєС‰Рѕ С„Р°Р№Р» РїРѕС€РєРѕРґР¶РµРЅРёР№ Р°Р±Рѕ РїРѕСЂРѕР¶РЅС–Р№, РїРѕРІРµСЂС‚Р°С”РјРѕ РїРѕСЂРѕР¶РЅС–Р№ СЃРїРёСЃРѕРє
+            # Р¦Рµ РІС–РґРїРѕРІС–РґР°С” РІРёРјРѕР·С– РїСЂРѕ РѕР±СЂРѕР±РєСѓ РІРёРЅСЏС‚РєРѕРІРёС… СЃРёС‚СѓР°С†С–Р№
             return []
 
     def save_all_tests(self, tests: list[Test]):
         try:
             with open(self.tests_file_path, 'w', encoding='utf-8') as f:
-                # Використовуємо .to_dict() для серіалізації
+                # Р’РёРєРѕСЂРёСЃС‚РѕРІСѓС”РјРѕ .to_dict() РґР»СЏ СЃРµСЂС–Р°Р»С–Р·Р°С†С–С—
                 data_to_save = [test.to_dict() for test in tests]
                 json.dump(data_to_save, f, indent=4, ensure_ascii=False)
         except IOError as e:
-            # Обробка виняткової ситуації (наприклад, немає прав на запис)
-            print(f"Помилка збереження тестів: {e}")
-            # Тут можна підняти власний клас виключення, як вимагалось
-            raise DataAccessError(f"Не вдалося зберегти дані у файл {self.tests_file_path}")
+            # РћР±СЂРѕР±РєР° РІРёРЅСЏС‚РєРѕРІРѕС— СЃРёС‚СѓР°С†С–С— (РЅР°РїСЂРёРєР»Р°Рґ, РЅРµРјР°С” РїСЂР°РІ РЅР° Р·Р°РїРёСЃ)
+            print(f"РџРѕРјРёР»РєР° Р·Р±РµСЂРµР¶РµРЅРЅСЏ С‚РµСЃС‚С–РІ: {e}")
+            # РўСѓС‚ РјРѕР¶РЅР° РїС–РґРЅСЏС‚Рё РІР»Р°СЃРЅРёР№ РєР»Р°СЃ РІРёРєР»СЋС‡РµРЅРЅСЏ, СЏРє РІРёРјР°РіР°Р»РѕСЃСЊ
+            raise DataAccessError(f"РќРµ РІРґР°Р»РѕСЃСЏ Р·Р±РµСЂРµРіС‚Рё РґР°РЅС– Сѓ С„Р°Р№Р» {self.tests_file_path}")
 
-    # --- Робота зі Статистикою ---
+    # --- Р РѕР±РѕС‚Р° Р·С– РЎС‚Р°С‚РёСЃС‚РёРєРѕСЋ ---
 
     def load_statistics(self) -> list[TestResult]:
         try:
@@ -56,7 +56,7 @@ class FileRepository:
             return []
 
     def save_statistic(self, result: TestResult):
-        # Ми не перезаписуємо всю статистику, а додаємо новий результат
+        # РњРё РЅРµ РїРµСЂРµР·Р°РїРёСЃСѓС”РјРѕ РІСЃСЋ СЃС‚Р°С‚РёСЃС‚РёРєСѓ, Р° РґРѕРґР°С”РјРѕ РЅРѕРІРёР№ СЂРµР·СѓР»СЊС‚Р°С‚
         stats = self.load_statistics()
         stats.append(result)
         try:
@@ -64,9 +64,9 @@ class FileRepository:
                 data_to_save = [stat.to_dict() for stat in stats]
                 json.dump(data_to_save, f, indent=4, ensure_ascii=False)
         except IOError as e:
-            print(f"Помилка збереження статистики: {e}")
-            raise DataAccessError(f"Не вдалося зберегти дані у файл {self.stats_file_path}")
+            print(f"РџРѕРјРёР»РєР° Р·Р±РµСЂРµР¶РµРЅРЅСЏ СЃС‚Р°С‚РёСЃС‚РёРєРё: {e}")
+            raise DataAccessError(f"РќРµ РІРґР°Р»РѕСЃСЏ Р·Р±РµСЂРµРіС‚Рё РґР°РЅС– Сѓ С„Р°Р№Р» {self.stats_file_path}")
 
-# Створимо власний клас виключення, як вимагає завдання (п.5)
+# РЎС‚РІРѕСЂРёРјРѕ РІР»Р°СЃРЅРёР№ РєР»Р°СЃ РІРёРєР»СЋС‡РµРЅРЅСЏ, СЏРє РІРёРјР°РіР°С” Р·Р°РІРґР°РЅРЅСЏ (Рї.5)
 class DataAccessError(Exception):
     pass
