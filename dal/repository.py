@@ -27,6 +27,11 @@ class FileRepository:
             return []
 
     def save_all_tests(self, tests: list[Test]):
+
+        directory = os.path.dirname(self.tests_file_path)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
         try:
             with open(self.tests_file_path, 'w', encoding='utf-8') as f:
                 data_to_save = [test.to_dict() for test in tests]
@@ -46,6 +51,12 @@ class FileRepository:
     def save_statistic(self, result: TestResult):
         stats = self.load_statistics()
         stats.append(result)
+
+
+        directory = os.path.dirname(self.stats_file_path)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
         try:
             with open(self.stats_file_path, 'w', encoding='utf-8') as f:
                 data_to_save = [stat.to_dict() for stat in stats]
