@@ -1,15 +1,11 @@
 ﻿import random
 from bll.models import Test, Question, Answer, TestResult
-from dal.repository import FileRepository # BLL залежить від *абстракції* DAL
-from bll.exceptions import * # Імпортуємо наші виключення
-
-# --- Сервіс 1: Керування тестами (для Адміністратора) ---
-# Цей клас реалізує Функціональні вимоги 1, 2, 3.1, 3.2, 4.1
+from dal.repository import FileRepository
+from bll.exceptions import *
 
 class TestManagementService:
     
     def __init__(self, repository: FileRepository):
-        # 7. Inversion of Control: Ми отримуємо репозиторій, а не створюємо
         self._repository = repository
         self._tests = self._repository.load_all_tests()
 
@@ -18,7 +14,6 @@ class TestManagementService:
         for test in self._tests:
             if test.id == test_id:
                 return test
-        # 5. Генерація власного виключення
         raise TestNotFoundError(f"Тест з ID {test_id} не знайдено.")
 
     def _get_question_by_id(self, test: Test, question_id: str) -> Question:
@@ -30,14 +25,12 @@ class TestManagementService:
     def save_changes(self):
         """Зберігає всі зміни у сховищі."""
         self._repository.save_all_tests(self._tests)
-
-    # --- 1. Керування питаннями ---
     
     def add_question(self, test_id: str, question_text: str) -> Question:
         test = self._get_test_by_id(test_id)
         new_question = Question(text=question_text)
         test.add_question(new_question)
-        return new_question # Повертаємо, щоб інтерфейс знав ID
+        return new_question
 
     def remove_question(self, test_id: str, question_id: str):
         test = self._get_test_by_id(test_id)
@@ -52,8 +45,6 @@ class TestManagementService:
     def get_all_questions(self, test_id: str) -> list[Question]:
         test = self._get_test_by_id(test_id)
         return test.questions
-
-    # --- 2. Керування відповідями ---
 
     def add_answer(self, test_id: str, question_id: str, text: str, is_correct: bool) -> Answer:
         test = self._get_test_by_id(test_id)
@@ -88,8 +79,6 @@ class TestManagementService:
                 return ans
         raise AnswerNotFoundError(f"Відповідь з ID {ans_id} не знайдено.")
 
-    # --- 3. Керування тестами ---
-
     def create_test(self, title: str, time_per_question: int = 60) -> Test:
         new_test = Test(title=title, time_per_question=time_per_question)
         self._tests.append(new_test)
@@ -99,29 +88,22 @@ class TestManagementService:
         test = self._get_test_by_id(test_id)
         test.title = new_title
         test.time_per_question = new_time
-    
-    # --- 4. Пошук ---
-    
+
     def get_all_tests(self) -> list[Test]:
-        # 4.1. Пошук тестів (у нашому випадку - повертаємо всі)
         return self._tests
 
     def find_test_by_id(self, test_id: str) -> Test:
         return self._get_test_by_id(test_id)
 
 
-# --- Сервіс 2: Проходження тестування (для Студента) ---
-# Цей клас реалізує вимоги 2.5, 3.3, 3.4
-
 class TestingService:
     def __init__(self, test: Test):
         if not test.questions:
-            # 5. Перевірка виняткової ситуації
+
             raise InvalidTestError("Неможливо почати тест, у ньому немає питань.")
         
         self.test = test
         self.current_question_index = -1
-        # Використовуємо словник для зберігання {question_id: selected_answer_id}
         self.user_answers: dict[str, str] = {}
         self._shuffled_questions = random.sample(self.test.questions, len(self.test.questions))
 
@@ -131,7 +113,6 @@ class TestingService:
         if self.current_question_index < len(self._shuffled_questions):
             question = self._shuffled_questions[self.current_question_index]
             
-            # 2.5. Варіанти відповідей генеруються автоматично (перемішуються)
             random.shuffle(question.answers)
             return question
         return None
@@ -141,11 +122,11 @@ class TestingService:
         self.user_answers[question_id] = answer_id
 
     def stop_test(self) -> dict:
-        """3.4. Можливість передчасно вийти з тесту (та порахувати результат)."""
+        """Можливість передчасно вийти з тесту (та порахувати результат)."""
         return self.calculate_results()
 
     def calculate_results(self) -> dict:
-        """3.3. Можливість порахувати процент правильних відповідей."""
+        """Можливість порахувати процент правильних відповідей."""
         correct_count = 0
         total_questions = len(self._shuffled_questions)
         
@@ -163,9 +144,6 @@ class TestingService:
         percent = (correct_count / total_questions) * 100
         return {"percent": round(percent, 2), "correct": correct_count, "total": total_questions}
 
-# --- Сервіс 3: Статистика ---
-# Цей клас реалізує вимогу 4.2
-
 class StatisticsService:
     def __init__(self, repository: FileRepository):
         self._repository = repository
@@ -181,7 +159,7 @@ class StatisticsService:
         self._repository.save_statistic(result)
 
     def get_test_statistics(self) -> list[dict]:
-        """4.2. Перегляд статистики тестів."""
+        """Перегляд статистики тестів."""
         all_results = self._repository.load_statistics()
         all_tests = self._repository.load_all_tests()
         
