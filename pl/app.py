@@ -39,7 +39,6 @@ def page_admin():
 
     def safe_save_changes():
         try:
-            from bll.exceptions import QuestionValidationError 
             management_service.save_changes()
             return True
         except QuestionValidationError as e:
