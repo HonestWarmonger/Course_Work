@@ -36,8 +36,16 @@ if not management_service:
 
 def page_admin():
     st.title("Керування тестами (Режим Адміністратора)")
-    
 
+    def safe_save_changes():
+        try:
+            from bll.exceptions import QuestionValidationError 
+            management_service.save_changes()
+            return True
+        except QuestionValidationError as e:
+
+            st.error(f"Помилка валідації: {e}")
+            return False
     with st.expander("Створити новий тест"):
         with st.form("new_test_form", clear_on_submit=True):
             new_title = st.text_input("Назва тесту")
@@ -46,9 +54,9 @@ def page_admin():
             if st.form_submit_button("Створити"):
                 if new_title:
                     management_service.create_test(new_title, new_time)
-                    management_service.save_changes()
-                    st.success(f"Тест '{new_title}' створено!")
-                    st.rerun()
+                    if safe_save_changes():
+                        st.success(f"Тест '{new_title}' створено!")
+                        st.rerun()
                 else:
                     st.warning("Назва тесту не може бути порожньою.")
 
@@ -72,9 +80,9 @@ def page_admin():
             
             if st.form_submit_button("Зберегти налаштування"):
                 management_service.edit_test_settings(selected_test.id, edit_title, edit_time)
-                management_service.save_changes()
-                st.success("Налаштування оновлено.")
-                st.rerun()
+                if safe_save_changes():
+                    st.success("Налаштування оновлено.")
+                    st.rerun()
 
     st.subheader("Питання тесту")
     for i, q in enumerate(selected_test.questions):
@@ -109,15 +117,15 @@ def page_admin():
                 col1, col2 = st.columns(2)
                 if col1.form_submit_button("Зберегти зміни питання"):
                     management_service.edit_question(selected_test.id, q.id, new_q_text)
-                    management_service.save_changes()
-                    st.success("Питання оновлено.")
-                    st.rerun()
+                    if safe_save_changes():
+                        st.success("Питання оновлено.")
+                        st.rerun()
                 
                 if col2.form_submit_button("Видалити питання", type="primary"):
                     management_service.remove_question(selected_test.id, q.id)
-                    management_service.save_changes()
-                    st.warning("Питання видалено.")
-                    st.rerun()
+                    if safe_save_changes():
+                        st.warning("Питання видалено.")
+                        st.rerun()
             
             st.markdown("---")
             st.write("Редагувати/Додати відповіді:")
@@ -130,12 +138,12 @@ def page_admin():
                     
                     if cols[2].form_submit_button("Зберегти"):
                         management_service.edit_answer(selected_test.id, q.id, ans.id, new_ans_text, new_is_correct)
-                        management_service.save_changes()
-                        st.rerun()
-                    if cols[2].form_submit_button("❌"):
+                        if safe_save_changes():
+                            st.rerun()
+                    if cols[2].form_submit_button("❌"): # 2.2. Видалити відповідь
                         management_service.remove_answer(selected_test.id, q.id, ans.id)
-                        management_service.save_changes()
-                        st.rerun()
+                        if safe_save_changes():
+                            st.rerun()
 
             with st.form(f"add_ans_form_{q.id}", clear_on_submit=True):
                 cols = st.columns([0.6, 0.2, 0.2])
@@ -145,19 +153,19 @@ def page_admin():
                 if cols[2].form_submit_button("Додати"):
                     if add_ans_text:
                         management_service.add_answer(selected_test.id, q.id, add_ans_text, add_is_correct)
-                        management_service.save_changes()
-                        st.rerun()
+                        if safe_save_changes():
+                            st.rerun()
                     else:
                         st.warning("Текст відповіді не може бути порожнім.")
 
     with st.form(f"add_q_form_{selected_test.id}", clear_on_submit=True):
         new_q_text = st.text_input("Текст нового питання:")
-        if st.form_submit_button("Додати питання до тесту"):
+        if st.form_submit_button("➕ Додати питання до тесту"):
             if new_q_text:
                 management_service.add_question(selected_test.id, new_q_text)
-                management_service.save_changes()
-                st.success("Питання додано.")
-                st.rerun()
+                if safe_save_changes():
+                    st.success("Питання додано.")
+                    st.rerun()
             else:
                 st.warning("Текст питання не може бути порожнім.")
 

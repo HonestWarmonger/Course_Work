@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\user\\Desktop\\CourseWork\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\CourseWork\\dal\\repository.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:dal\\repository.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\CourseWork\\pl\\app.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:pl\\app.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
@@ -13,10 +17,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\CourseWork\\dal\\__init__.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:dal\\__init__.py||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\CourseWork\\dal\\repository.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:dal\\repository.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\CourseWork\\bll\\__init__.py||{8B382828-6202-11D1-8870-0000F87579D2}",
@@ -42,11 +42,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "app.py",
               "DocumentMoniker": "C:\\Users\\user\\Desktop\\CourseWork\\pl\\app.py",
               "RelativeDocumentMoniker": "pl\\app.py",
@@ -59,7 +59,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "test_bll_services.py",
               "DocumentMoniker": "C:\\Users\\user\\Desktop\\CourseWork\\tests\\test_bll_services.py",
               "RelativeDocumentMoniker": "tests\\test_bll_services.py",
@@ -67,12 +67,11 @@
               "RelativeToolTip": "tests\\test_bll_services.py",
               "ViewState": "AgIAAHUAAAAAAAAAAAAAAIEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-11-16T16:46:18.182Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-16T16:46:18.182Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "__init__.py",
               "DocumentMoniker": "C:\\Users\\user\\Desktop\\CourseWork\\dal\\__init__.py",
               "RelativeDocumentMoniker": "dal\\__init__.py",
@@ -80,18 +79,17 @@
               "RelativeToolTip": "dal\\__init__.py",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-11-16T16:46:03.813Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-16T16:46:03.813Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "repository.py",
               "DocumentMoniker": "C:\\Users\\user\\Desktop\\CourseWork\\dal\\repository.py",
               "RelativeDocumentMoniker": "dal\\repository.py",
               "ToolTip": "C:\\Users\\user\\Desktop\\CourseWork\\dal\\repository.py",
               "RelativeToolTip": "dal\\repository.py",
-              "ViewState": "AgIAACcAAAAAAAAAAAAAADcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2025-11-16T16:45:42.646Z",
               "EditorCaption": ""
@@ -106,8 +104,7 @@
               "RelativeToolTip": "bll\\__init__.py",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-11-16T16:45:26.867Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-16T16:45:26.867Z"
             },
             {
               "$type": "Document",
@@ -119,8 +116,7 @@
               "RelativeToolTip": "bll\\services.py",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAHwAAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-11-16T16:45:15.759Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-16T16:45:15.759Z"
             },
             {
               "$type": "Document",
@@ -132,8 +128,7 @@
               "RelativeToolTip": "bll\\models.py",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAD0AAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-11-16T16:45:04.835Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-16T16:45:04.835Z"
             },
             {
               "$type": "Document",
@@ -145,8 +140,7 @@
               "RelativeToolTip": "bll\\exceptions.py",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-11-16T16:44:27.209Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-16T16:44:27.209Z"
             }
           ]
         }

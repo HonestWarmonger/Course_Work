@@ -14,7 +14,6 @@ from dal.repository import FileRepository
 class TestTestManagementService(unittest.TestCase):
 
     def setUp(self):
-        """Цей метод викликається перед кожним тестом."""
         
         self.mock_repo = Mock(spec=FileRepository)
 

@@ -10,7 +10,6 @@ class TestManagementService:
         self._tests = self._repository.load_all_tests()
 
     def _get_test_by_id(self, test_id: str) -> Test:
-        """Допоміжний приватний метод для пошуку тесту."""
         for test in self._tests:
             if test.id == test_id:
                 return test
@@ -23,7 +22,15 @@ class TestManagementService:
         raise QuestionNotFoundError(f"Питання з ID {question_id} не знайдено.")
 
     def save_changes(self):
-        """Зберігає всі зміни у сховищі."""
+        
+        for test in self._tests:
+            for q in test.questions:
+
+                if q.answers and not any(ans.is_correct for ans in q.answers):
+                    raise QuestionValidationError(
+                        f"Помилка збереження: Питання '{q.text[:50]}...' у тесті '{test.title}' не має жодної правильної відповіді."
+                    )
+
         self._repository.save_all_tests(self._tests)
     
     def add_question(self, test_id: str, question_text: str) -> Question:
@@ -99,8 +106,13 @@ class TestManagementService:
 class TestingService:
     def __init__(self, test: Test):
         if not test.questions:
-
             raise InvalidTestError("Неможливо почати тест, у ньому немає питань.")
+        
+        for q in test.questions:
+            if not q.answers or not any(ans.is_correct for ans in q.answers):
+                raise InvalidTestError(
+                    f"Неможливо почати тест. Питання '{q.text[:50]}...' не налаштоване (немає правильної відповіді)."
+                )
         
         self.test = test
         self.current_question_index = -1
@@ -108,7 +120,6 @@ class TestingService:
         self._shuffled_questions = random.sample(self.test.questions, len(self.test.questions))
 
     def get_next_question(self) -> Question | None:
-        """Повертає наступне питання або None, якщо тест закінчено."""
         self.current_question_index += 1
         if self.current_question_index < len(self._shuffled_questions):
             question = self._shuffled_questions[self.current_question_index]
@@ -118,15 +129,12 @@ class TestingService:
         return None
 
     def submit_answer(self, question_id: str, answer_id: str):
-        """Зберегти відповідь користувача."""
         self.user_answers[question_id] = answer_id
 
     def stop_test(self) -> dict:
-        """Можливість передчасно вийти з тесту (та порахувати результат)."""
         return self.calculate_results()
 
     def calculate_results(self) -> dict:
-        """Можливість порахувати процент правильних відповідей."""
         correct_count = 0
         total_questions = len(self._shuffled_questions)
         
@@ -149,7 +157,6 @@ class StatisticsService:
         self._repository = repository
 
     def record_result(self, test_id: str, test_title: str, score: float, student: str):
-        """Зберегти результат проходження."""
         result = TestResult(
             test_title=test_title,
             test_id=test_id,
@@ -159,7 +166,6 @@ class StatisticsService:
         self._repository.save_statistic(result)
 
     def get_test_statistics(self) -> list[dict]:
-        """Перегляд статистики тестів."""
         all_results = self._repository.load_statistics()
         all_tests = self._repository.load_all_tests()
         
