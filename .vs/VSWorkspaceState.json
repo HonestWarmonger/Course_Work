@@ -3,8 +3,9 @@
     "",
     "\\bll",
     "\\dal",
+    "\\pl",
     "\\tests"
   ],
-  "SelectedNode": "\\app.py",
+  "SelectedNode": "\\pl\\app.py",
   "PreviewInSolutionExplorer": false
 }

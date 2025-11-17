@@ -1,22 +1,33 @@
-﻿import streamlit as st
+﻿# --- Початок модифікації для pl/app.py ---
+import sys
+import os
+
+# 1. Знаходимо абсолютний шлях до кореневої папки проєкту
+# (це шлях до папки, що містить 'pl', 'bll', 'dal')
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+# 2. Додаємо цей шлях до 'sys.path'
+# Тепер Python буде шукати модулі (bll, dal) у кореневій папці
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+# --- Кінець модифікації ---
+
+import streamlit as st
 import time
 
 # --- Імпорт наших шарів ---
-# Ми імпортуємо класи з BLL, DAL та наші виключення
+# Тепер ці імпорти спрацюють коректно!
 from dal.repository import FileRepository, DataAccessError
 from bll.services import TestManagementService, TestingService, StatisticsService
 from bll.exceptions import *
 
 # --- 1. Налаштування та Ініціалізація (Dependency Injection) ---
 
-# Вказуємо шляхи до наших файлів даних
-TESTS_FILE = "data_tests.json"
-STATS_FILE = "data_stats.json"
+# 3. Оновлюємо шляхи до файлів даних, щоб вони вказували на папку 'data'
+TESTS_FILE = os.path.join(PROJECT_ROOT, "data", "data_tests.json")
+STATS_FILE = os.path.join(PROJECT_ROOT, "data", "data_stats.json")
 
-# @st.cache_resource - це магія Streamlit. 
-# Ця команда гарантує, що наш DAL та BLL створяться ЛИШЕ ОДИН РАЗ
-# і будуть "жити" протягом усього сеансу. 
-# Це і є наш "Inversion of Control" на рівні PL.
 @st.cache_resource
 def get_services():
     """Ініціалізує та повертає всі необхідні сервіси."""
