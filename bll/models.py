@@ -1,21 +1,31 @@
 ﻿import uuid
+from abc import ABC
 
-class Answer:
-    def __init__(self, text: str, is_correct: bool = False, id: str = None):
+class Entity(ABC):
+    def __init__(self, id: str = None):
         self.id = id or str(uuid.uuid4())
+
+    def to_dict(self):
+        return {"id": self.id}
+
+class Answer(Entity):
+    def __init__(self, text: str, is_correct: bool = False, id: str = None):
+        super().__init__(id)
         self.text = text
         self.is_correct = is_correct
 
     def to_dict(self):
-        return {"id": self.id, "text": self.text, "is_correct": self.is_correct}
+        data = super().to_dict()
+        data.update({"text": self.text, "is_correct": self.is_correct})
+        return data
 
     @classmethod
     def from_dict(cls, data):
         return cls(data['text'], data['is_correct'], data['id'])
 
-class Question:
+class Question(Entity):
     def __init__(self, text: str, id: str = None):
-        self.id = id or str(uuid.uuid4())
+        super().__init__(id)
         self.text = text
         self.answers: list[Answer] = []
 
@@ -23,11 +33,12 @@ class Question:
         self.answers.append(answer)
 
     def to_dict(self):
-        return {
-            "id": self.id,
+        data = super().to_dict()
+        data.update({
             "text": self.text,
             "answers": [ans.to_dict() for ans in self.answers]
-        }
+        })
+        return data
 
     @classmethod
     def from_dict(cls, data):
@@ -35,9 +46,9 @@ class Question:
         question.answers = [Answer.from_dict(ans_data) for ans_data in data['answers']]
         return question
 
-class Test:
+class Test(Entity):
     def __init__(self, title: str, time_per_question: int = 60, id: str = None):
-        self.id = id or str(uuid.uuid4())
+        super().__init__(id)
         self.title = title
         self.time_per_question = time_per_question
         self.questions: list[Question] = []
@@ -46,12 +57,13 @@ class Test:
         self.questions.append(question)
 
     def to_dict(self):
-        return {
-            "id": self.id,
+        data = super().to_dict()
+        data.update({
             "title": self.title,
             "time_per_question": self.time_per_question,
             "questions": [q.to_dict() for q in self.questions]
-        }
+        })
+        return data
 
     @classmethod
     def from_dict(cls, data):
@@ -60,6 +72,7 @@ class Test:
         return test
 
 class TestResult:
+
     def __init__(self, test_title: str, test_id: str, score_percent: float, student_name: str = "Анонім"):
         self.test_title = test_title
         self.test_id = test_id

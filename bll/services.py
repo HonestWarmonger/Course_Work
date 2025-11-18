@@ -1,11 +1,12 @@
 ﻿import random
 from bll.models import Test, Question, Answer, TestResult
-from dal.repository import FileRepository
-from bll.exceptions import *
+
+from dal.repository import BaseRepository 
+from bll.exceptions import * 
 
 class TestManagementService:
     
-    def __init__(self, repository: FileRepository):
+    def __init__(self, repository: BaseRepository):
         self._repository = repository
         self._tests = self._repository.load_all_tests()
 
@@ -153,7 +154,7 @@ class TestingService:
         return {"percent": round(percent, 2), "correct": correct_count, "total": total_questions}
 
 class StatisticsService:
-    def __init__(self, repository: FileRepository):
+    def __init__(self, repository: BaseRepository):
         self._repository = repository
 
     def record_result(self, test_id: str, test_title: str, score: float, student: str):
