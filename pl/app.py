@@ -192,6 +192,7 @@ def page_student():
                 st.session_state['testing_session'] = testing_session
                 st.session_state['student_name'] = student_name
                 st.session_state['current_question'] = testing_session.get_next_question()
+                st.session_state['stats_recorded'] = False
                 st.rerun()
 
             except InvalidTestError as e:
